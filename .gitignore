@@ -1,0 +1,16 @@
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Archivos temporales
+*.tmp
+*.temp
+
+# Archivos de IDE
+.vscode/
+.idea/
+*.swp
+*.swo 
