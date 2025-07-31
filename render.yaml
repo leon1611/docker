@@ -1,0 +1,195 @@
+# 🐳 X-NOSE - Render Configuration
+# Archivo de configuración para despliegue en Render
+
+databases:
+  - name: xnose-postgres
+    databaseName: xnose_db
+    user: xnose_user
+    plan: free
+
+services:
+  # Gateway Service (Puerto 8080)
+  - type: web
+    name: xnose-gateway
+    runtime: docker
+    plan: free
+    dockerfilePath: ./gateway-service/Dockerfile
+    dockerContext: ./gateway-service
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: production
+      - key: SERVER_PORT
+        value: 8080
+      - key: DATABASE_URL
+        fromDatabase:
+          name: xnose-postgres
+          property: connectionString
+      - key: DATABASE_USERNAME
+        fromDatabase:
+          name: xnose-postgres
+          property: user
+      - key: DATABASE_PASSWORD
+        fromDatabase:
+          name: xnose-postgres
+          property: password
+    healthCheckPath: /actuator/health
+    autoDeploy: true
+
+  # Auth Service (Puerto 8081)
+  - type: web
+    name: xnose-auth
+    runtime: docker
+    plan: free
+    dockerfilePath: ./auth-service/Dockerfile
+    dockerContext: ./auth-service
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: production
+      - key: SERVER_PORT
+        value: 8081
+      - key: DATABASE_URL
+        fromDatabase:
+          name: xnose-postgres
+          property: connectionString
+      - key: DATABASE_USERNAME
+        fromDatabase:
+          name: xnose-postgres
+          property: user
+      - key: DATABASE_PASSWORD
+        fromDatabase:
+          name: xnose-postgres
+          property: password
+      - key: JWT_SECRET
+        generateValue: true
+    healthCheckPath: /actuator/health
+    autoDeploy: true
+
+  # Owner Service (Puerto 8082)
+  - type: web
+    name: xnose-owner
+    runtime: docker
+    plan: free
+    dockerfilePath: ./owner-service/Dockerfile
+    dockerContext: ./owner-service
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: production
+      - key: SERVER_PORT
+        value: 8082
+      - key: DATABASE_URL
+        fromDatabase:
+          name: xnose-postgres
+          property: connectionString
+      - key: DATABASE_USERNAME
+        fromDatabase:
+          name: xnose-postgres
+          property: user
+      - key: DATABASE_PASSWORD
+        fromDatabase:
+          name: xnose-postgres
+          property: password
+    healthCheckPath: /actuator/health
+    autoDeploy: true
+
+  # Pet Service (Puerto 8083)
+  - type: web
+    name: xnose-pet
+    runtime: docker
+    plan: free
+    dockerfilePath: ./pet-service/Dockerfile
+    dockerContext: ./pet-service
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: production
+      - key: SERVER_PORT
+        value: 8083
+      - key: DATABASE_URL
+        fromDatabase:
+          name: xnose-postgres
+          property: connectionString
+      - key: DATABASE_USERNAME
+        fromDatabase:
+          name: xnose-postgres
+          property: user
+      - key: DATABASE_PASSWORD
+        fromDatabase:
+          name: xnose-postgres
+          property: password
+    healthCheckPath: /actuator/health
+    autoDeploy: true
+
+  # Alert Service (Puerto 8084)
+  - type: web
+    name: xnose-alert
+    runtime: docker
+    plan: free
+    dockerfilePath: ./alert-service/Dockerfile
+    dockerContext: ./alert-service
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: production
+      - key: SERVER_PORT
+        value: 8084
+      - key: DATABASE_URL
+        fromDatabase:
+          name: xnose-postgres
+          property: connectionString
+      - key: DATABASE_USERNAME
+        fromDatabase:
+          name: xnose-postgres
+          property: user
+      - key: DATABASE_PASSWORD
+        fromDatabase:
+          name: xnose-postgres
+          property: password
+    healthCheckPath: /actuator/health
+    autoDeploy: true
+
+  # AI Service (Puerto 8000)
+  - type: web
+    name: xnose-ai
+    runtime: docker
+    plan: free
+    dockerfilePath: ./ai-service/Dockerfile
+    dockerContext: ./ai-service
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: PORT
+        value: 8000
+      - key: DATABASE_URL
+        fromDatabase:
+          name: xnose-postgres
+          property: connectionString
+      - key: DATABASE_USERNAME
+        fromDatabase:
+          name: xnose-postgres
+          property: user
+      - key: DATABASE_PASSWORD
+        fromDatabase:
+          name: xnose-postgres
+          property: password
+    healthCheckPath: /health
+    autoDeploy: true
+
+  # Frontend (Puerto 19000)
+  - type: web
+    name: xnose-frontend
+    runtime: docker
+    plan: free
+    dockerfilePath: ./frontend/Dockerfile
+    dockerContext: ./frontend
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 19000
+      - key: REACT_APP_API_URL
+        value: https://xnose-gateway.onrender.com
+      - key: REACT_APP_AI_SERVICE_URL
+        value: https://xnose-ai.onrender.com
+    healthCheckPath: /
+    autoDeploy: true
+
+# Variables de entorno globales
+# Nota: Las variables de entorno globales se configuran en el dashboard de Render 
